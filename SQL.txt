@@ -1,5 +1,27 @@
+-- users
 CREATE TABLE users(
 	id SERIAL PRIMARY KEY,
 	email VARCHAR(255) NOT NULL,
 	password VARCHAR(255) NOT NULL
+);
+
+-- issue state
+CREATE TYPE issue_state AS ENUM (
+    'Open',
+    'Backlog',
+    'Iteration Backlog',
+    'In Progress',
+    'Verify',
+    'Closed'
+);
+
+-- issues
+CREATE TABLE issues (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    due_date DATE,
+    state issue_state NOT NULL DEFAULT 'Open',
+    user_id INT NOT NULL,
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
