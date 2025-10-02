@@ -1,0 +1,31 @@
+<!--Register Page-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+<!--    <link rel="stylesheet" th:href="/css/home.css"/>-->
+</head>
+<body>
+
+<form th:action="@{/register}" th:object="${registerDto}" method="post">
+    <!--email-->
+    <input type="email" th:field="*{email}" placeholder="Email" required/>
+    <div th:if="${#fields.hasErrors('email')}">
+        <p th:errors="*{email}"></p>
+    </div>
+    <!--password-->
+    <input type="password" th:field="*{password}" placeholder="Password" required/>
+    <div th:if="${#fields.hasErrors('password')}">
+        <p th:errors="*{password}"></p>
+    </div>
+    <!--password confirmation-->
+    <input type="password" th:field="*{confirmPassword}" placeholder="Confirm Password" required/>
+    <div th:if="${#fields.hasErrors('confirmPassword')}">
+        <p th:errors="*{confirmPassword}"></p>
+    </div>
+
+    <button type="submit">Register</button>
+</form>
+</body>
+</html>

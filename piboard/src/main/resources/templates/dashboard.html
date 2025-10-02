@@ -1,0 +1,19 @@
+<!--Dashboard-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard</title>
+<!--    <link rel="stylesheet" th:href="/css/home.css"/>-->
+</head>
+<body>
+    <h2>Welcome, <span th:text="${email}"></span>! </h2>
+
+    <a th:href="@{/logout}">
+        <button type="button">Logout</button>
+    </a>
+
+    <a th:href="@{/issues}">
+        <button type="button">My Issues</button>
+    </a>
+</body>
+</html>
