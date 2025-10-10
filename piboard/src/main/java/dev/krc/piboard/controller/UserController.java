@@ -1,9 +1,7 @@
 package dev.krc.piboard.controller;
 
-import dev.krc.piboard.dto.LoginDto;
+import dev.krc.piboard.dto.UserLoginDto;
 import dev.krc.piboard.dto.UserRegistrationDto;
-import dev.krc.piboard.model.Users;
-import dev.krc.piboard.repository.UsersRepository;
 import dev.krc.piboard.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
@@ -55,6 +53,7 @@ public class UserController {
         }
     }
 
+
     //Display regSuccess get
     @GetMapping("/reg-success")
     public String regSuccess() {
@@ -65,13 +64,13 @@ public class UserController {
     //Display Login Get
     @GetMapping("/login")
     public String login(Model model) {
-        model.addAttribute("loginDto", new LoginDto());
+        model.addAttribute("loginDto", new UserLoginDto());
         return "login";
     }
 
     //Handles login submission
     @PostMapping("/login")
-    public String login(@ModelAttribute("user")LoginDto loginDto, Model model, HttpSession session) {
+    public String login(@ModelAttribute("user") UserLoginDto loginDto, Model model, HttpSession session) {
         HttpStatusCode statusCode = userService.login(loginDto).getStatusCode();
         switch(statusCode){
             case HttpStatus.OK -> {
@@ -83,21 +82,41 @@ public class UserController {
                 return "redirect:/login";
             }
             default -> {
-                model.addAttribute("loginDto", new LoginDto());
+                model.addAttribute("loginDto", new UserLoginDto());
                 return "redirect:/login";
             }
         }
     }
 
-
+    //Display success get
     @GetMapping("/dashboard")
     public String dashboard(Model model, HttpSession session) {
         String email = Objects.toString(session.getAttribute("userMail"));
         if(email == null) {
             return "redirect:/login";
         }
-        model.addAttribute("email", email);
         return "dashboard";
     }
 
+    //**************Direct Endpoint Provider Methods**************
+
+    @GetMapping("/pi-register")
+    public ResponseEntity<String> register() {
+        return new ResponseEntity<>("Post only", HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    @PostMapping("/pi-register")
+    public ResponseEntity<String> register(UserRegistrationDto registerDto){
+        return userService.register(registerDto);
+    }
+
+    @GetMapping("/pi-login")
+    public ResponseEntity<String> login() {
+        return new ResponseEntity<>("Post only", HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    @PostMapping("/pi-login")
+    public ResponseEntity<String> register(UserLoginDto loginDto){
+        return userService.login(loginDto);
+    }
 }
