@@ -70,11 +70,11 @@ public class UserController {
 
     //Handles login submission
     @PostMapping("/login")
-    public String login(@ModelAttribute("user") UserLoginDto loginDto, Model model, HttpServletResponse httpServletResponse) {
+    public String login(@ModelAttribute("user") UserLoginDto loginDto, Model model, HttpServletResponse httpServletResponse, HttpSession httpSession) {
         HttpStatusCode statusCode = userService.login(loginDto).getStatusCode();
         switch(statusCode){
             case HttpStatus.OK -> {
-                addLoginCookie(httpServletResponse, loginDto.getEmail());
+                httpSession.setAttribute("jwt",userService.generateJwtToken(loginDto.getEmail()));
                 return "redirect:/dashboard";
             }
             case HttpStatus.UNAUTHORIZED -> {
@@ -88,38 +88,6 @@ public class UserController {
         }
     }
 
-    @GetMapping("/logout")
-    public String logout(HttpServletResponse httpServletResponse) {
-        removeLoginCookie(httpServletResponse);
-        return "redirect:/login";
-    }
-
-    //**************Auxiliary Functions**************
-    /**
-     * Adds the jwt cookie safely
-     * @param response HttpServletResponse of the post
-     * @param email of the user
-     */
-    private void addLoginCookie(HttpServletResponse response, String email) {
-        ResponseCookie cookie = ResponseCookie.from("jwt", userService.generateJwtToken(email))
-                .httpOnly(true)
-                .secure(true)
-                .path("/") //for all endpoints
-                .maxAge(Duration.ofHours(24))
-                .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-    }
-
-    private void removeLoginCookie(HttpServletResponse response) {
-        ResponseCookie cookie = ResponseCookie.from("jwt", "")
-                .httpOnly(true)
-                .secure(true)
-                .path("/") //for all endpoints
-                .maxAge(5)
-                .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-    }
-
     //Display success get
     @GetMapping("/dashboard")
     public String dashboard(Model model, HttpSession session) {
@@ -129,6 +97,14 @@ public class UserController {
         }
         return "dashboard";
     }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletResponse httpServletResponse, HttpSession httpSession) {
+        httpSession.invalidate();
+        return "login";
+    }
+
+    //**************Auxiliary Functions**************
 
     //**************Direct Endpoint Provider Methods**************
 
