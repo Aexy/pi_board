@@ -2,10 +2,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Unexpected Error</title>
-<!--  <link rel="stylesheet" th:href="@{/css/home.css}"/>-->
+    <meta charset="UTF-8">
+    <title>Unexpected Error</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}"/>
 </head>
 <body>
-<h1>Unexpected Error</h1>
+    <!--Top-->
+    <header>
+        <h1>(&pi;) pi_board</h1>
+    </header>
+    <p>Unexpected Error Occurred</p>
+    <a th:href="@{/login}">
+        <button type="button">Login</button>
+    </a>
+    <a th:href="@{/register}">
+        <button type="button">Register</button>
+    </a>
 </body>
 </html>

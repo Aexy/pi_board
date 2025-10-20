@@ -5,6 +5,8 @@ import lombok.*;
 @Getter
 @Setter
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserRegistrationDto {
 
     private String email;

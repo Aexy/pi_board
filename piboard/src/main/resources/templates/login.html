@@ -7,10 +7,11 @@
   <link rel="stylesheet" th:href="@{/css/home.css}"/>
 </head>
 <body>
-  <!--Top-->
-  <header>
-    <h1>(&pi;) pi_board</h1>
-  </header>
+    <!--Top-->
+    <header>
+        <h1>(&pi;) pi_board</h1>
+    </header>
+
 <form th:action="@{/login}" th:object="${loginDto}" method="post">
   <!--email-->
   <input type="email" th:field="*{email}" placeholder="Email" required/>

@@ -3,15 +3,17 @@ package dev.krc.piboard.controller;
 import dev.krc.piboard.dto.UserLoginDto;
 import dev.krc.piboard.dto.UserRegistrationDto;
 import dev.krc.piboard.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 
-import java.util.Objects;
+import java.time.Duration;
 
 @Controller
 public class UserController {
@@ -32,7 +34,6 @@ public class UserController {
     @PostMapping("/register")
     public String submitRegister(@ModelAttribute("user") UserRegistrationDto registerDto, Model model) {
         HttpStatusCode statusCode = userService.register(registerDto).getStatusCode();
-
         switch (statusCode) {
             case HttpStatus.CONFLICT -> {
                 model.addAttribute("error", "User already exists");
@@ -53,7 +54,6 @@ public class UserController {
         }
     }
 
-
     //Display regSuccess get
     @GetMapping("/reg-success")
     public String regSuccess() {
@@ -70,11 +70,11 @@ public class UserController {
 
     //Handles login submission
     @PostMapping("/login")
-    public String login(@ModelAttribute("user") UserLoginDto loginDto, Model model, HttpSession session) {
+    public String login(@ModelAttribute("user") UserLoginDto loginDto, Model model, HttpServletResponse httpServletResponse) {
         HttpStatusCode statusCode = userService.login(loginDto).getStatusCode();
         switch(statusCode){
             case HttpStatus.OK -> {
-                session.setAttribute("userMail", loginDto.getEmail());
+                addLoginCookie(httpServletResponse, loginDto.getEmail());
                 return "redirect:/dashboard";
             }
             case HttpStatus.UNAUTHORIZED -> {
@@ -83,16 +83,48 @@ public class UserController {
             }
             default -> {
                 model.addAttribute("loginDto", new UserLoginDto());
-                return "redirect:/login";
+                return "login";
             }
         }
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletResponse httpServletResponse) {
+        removeLoginCookie(httpServletResponse);
+        return "redirect:/login";
+    }
+
+    //**************Auxiliary Functions**************
+    /**
+     * Adds the jwt cookie safely
+     * @param response HttpServletResponse of the post
+     * @param email of the user
+     */
+    private void addLoginCookie(HttpServletResponse response, String email) {
+        ResponseCookie cookie = ResponseCookie.from("jwt", userService.generateJwtToken(email))
+                .httpOnly(true)
+                .secure(true)
+                .path("/") //for all endpoints
+                .maxAge(Duration.ofHours(24))
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+    }
+
+    private void removeLoginCookie(HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from("jwt", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/") //for all endpoints
+                .maxAge(5)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     //Display success get
     @GetMapping("/dashboard")
     public String dashboard(Model model, HttpSession session) {
-        String email = Objects.toString(session.getAttribute("userMail"));
-        if(email == null) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
             return "redirect:/login";
         }
         return "dashboard";
