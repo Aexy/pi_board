@@ -49,7 +49,6 @@ public class IssueController {
 
     @PostMapping("/anew-issue")
     public String addNewIssue(@ModelAttribute("issueDto") IssueRequestDto issueDto, Model model, HttpSession session) {
-        System.out.println("JWT SESH: " + session.getAttribute("jwt"));
         ResponseEntity<String> response = issueService.addIssue(issueDto, session.getAttribute("jwt").toString());
         if(!response.getStatusCode().is2xxSuccessful()){
             model.addAttribute("error", response.getBody());
