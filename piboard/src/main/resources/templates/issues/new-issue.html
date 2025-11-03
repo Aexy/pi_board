@@ -1,0 +1,39 @@
+<!--New Issue Page-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add an Issue</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}"/>
+</head>
+<body>
+    <!--Top-->
+    <header>
+        <h1>(&pi;) pi_board</h1>
+    </header>
+    <h2>Add an Issue</h2>
+    <form th:action="@{/anew-issue}" th:object="${issueDto}" method="post">
+        <!--title-->
+        <input type="text" th:field="*{title}" placeholder="Title" required/>
+        <!--description-->
+        <input type="text" th:field="*{description}" placeholder="Description" required/>
+        <!--dueDate-->
+        <input type="date" th:field="*{dueDate}" placeholder="Due Date" required/>
+
+        <!--error-->
+        <p th:if="${error}" th:text="${error}"></p>
+        <!--success-->
+        <p th:if="${success}" th:text="${success}"></p>
+
+        <button type="submit">Add Issue</button>
+    </form>
+
+    <a th:href="@{/all-issues}">
+        <button type="button">All Issues</button>
+    </a>
+
+    <a th:href="@{/dashboard}">
+        <button type="button">Back to dashboard</button>
+    </a>
+</body>
+</html>

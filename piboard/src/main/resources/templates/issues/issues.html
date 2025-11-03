@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Issues</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}"/>
+</head>
+<body>
+    <!--Top-->
+    <header>
+        <h1>(&pi;) pi_board</h1>
+    </header>
+
+    <!--Send get request to all issues-->
+    <a th:href="@{/all-issues}">
+        <button type="button">List all issues</button>
+    </a>
+
+    <!--Send get request to add issue-->
+    <a th:href="@{/new-issue}">
+        <button type="button">Add an issue</button>
+    </a>
+</body>
+</html>

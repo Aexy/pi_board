@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Issues</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}"/>
+</head>
+<body>
+    <!--Top-->
+    <header>
+        <h1>(&pi;) pi_board</h1>
+    </header>
+    <h2>All Issues</h2>
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Due</th>
+            <th>Status</th>
+            <th>Assignee</th>
+        </tr>
+        <tr th:each="issue : ${issues}">
+            <td th:text="${issue.title}"></td>
+            <td th:text="${issue.description}"></td>
+            <td th:text="${issue.dueDate}"></td>
+            <td th:text="${issue.state}"></td>
+            <td th:text="${issue.assignee}"></td>
+        </tr>
+
+    </table>
+</body>
+</html>

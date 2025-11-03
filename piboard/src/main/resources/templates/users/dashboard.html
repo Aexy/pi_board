@@ -7,6 +7,10 @@
     <link rel="stylesheet" th:href="@{/css/home.css}"/>
 </head>
 <body>
+    <!--Top-->
+    <header>
+        <h1>(&pi;) pi_board</h1>
+    </header>
     <h2>Welcome, <span th:text="${#authentication.name}"></span>! </h2>
 
     <a th:href="@{/logout}">

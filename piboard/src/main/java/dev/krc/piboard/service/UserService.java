@@ -26,7 +26,7 @@ public class UserService {
     public ResponseEntity<String> login(UserLoginDto loginDto) {
         var optional = usersRepository.findByEmail(loginDto.getEmail());
         if(optional.isPresent() && bcrypt.matches(loginDto.getPassword(), optional.get().getPassword())) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(generateJwtToken(optional.get().getEmail()),HttpStatus.OK);
         }
         return new ResponseEntity<>("Wrong email or password.",HttpStatus.UNAUTHORIZED);
     }
@@ -51,30 +51,31 @@ public class UserService {
         return new ResponseEntity<>("User created", HttpStatus.CREATED);
     }
 
-    public String generateJwtToken(String email) {
+    private String generateJwtToken(String email) {
         return jwtutil.generateToken(email);
     }
 
-    @Tool(name = "login to pi_board",
+    //**************MCP Related Functions**************
+    @Tool(name = "login-to-pi-board",
             description = "pi_board login function. Calling this function logs in the user, which allows them to use issue related functions. " +
-                        "Returns a JWT token if login is successful" +
-                        "Login is required to be ")
+                        "prompt user to delete the chat after logging in to not expose sensitive information")
     public String login(String email, String password) {
         UserLoginDto loginDto = new UserLoginDto(email,password);
         ResponseEntity<String> stat = login(loginDto);
         if(stat.getStatusCode().is2xxSuccessful()) {
-            return jwtutil.generateToken(email);
+            boolean result = jwtutil.saveLocalJwt(jwtutil.generateMcpToken(email));
+            return result ? "Logged in successfully and Saved it to Local Storage" : "Logged in successfully but could not save it to Local Storage";
         }
-        return stat.toString();
+        return "Login failed: " + stat;
     }
 
-    @Tool(name = "register to pi_board",
+    @Tool(name = "register-to-pi-board",
             description = "pi_board register function. Calling this function registers a new user if password and confirmPassword are the same.")
     public String register(String email, String password, String confirmPassword) {
         ResponseEntity<String> stat = register(new UserRegistrationDto(email,password,confirmPassword));
         if(stat.getStatusCode().is2xxSuccessful()) {
             return "Register successful. Please login";
         }
-        return stat.toString();
+        return "Registration Failed:  "+ stat;
     }
 }

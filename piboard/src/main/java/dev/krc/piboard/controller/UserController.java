@@ -5,15 +5,18 @@ import dev.krc.piboard.dto.UserRegistrationDto;
 import dev.krc.piboard.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.http.*;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.Duration;
+import java.util.Map;
 
 @Controller
 public class UserController {
@@ -27,7 +30,7 @@ public class UserController {
     @GetMapping("/register")
     public String register(Model model) {
         model.addAttribute("registerDto", new UserRegistrationDto());
-        return "register";
+        return "users/register";
     }
 
     //Handles registration submission
@@ -37,11 +40,11 @@ public class UserController {
         switch (statusCode) {
             case HttpStatus.CONFLICT -> {
                 model.addAttribute("error", "User already exists");
-                return "register";
+                return "users/register";
             }
             case HttpStatus.BAD_REQUEST -> {
                 model.addAttribute("error", "Passwords do not match");
-                return "register";
+                return "users/register";
             }
             case HttpStatus.CREATED -> {
                 model.addAttribute("success", "success");
@@ -57,51 +60,45 @@ public class UserController {
     //Display regSuccess get
     @GetMapping("/reg-success")
     public String regSuccess() {
-        return "reg-success";
+        return "users/reg-success";
     }
 
 
     //Display Login Get
     @GetMapping("/login")
-    public String login(Model model) {
+    public String login(@RequestParam(value = "error", required = false) String error,Model model) {
+        if(error != null) {
+            model.addAttribute("error", Map.of("message", "Invalid Credentials"));
+        }
         model.addAttribute("loginDto", new UserLoginDto());
-        return "login";
+        return "users/login";
     }
 
     //Handles login submission
     @PostMapping("/login")
-    public String login(@ModelAttribute("user") UserLoginDto loginDto, Model model, HttpServletResponse httpServletResponse, HttpSession httpSession) {
-        HttpStatusCode statusCode = userService.login(loginDto).getStatusCode();
-        switch(statusCode){
-            case HttpStatus.OK -> {
-                httpSession.setAttribute("jwt",userService.generateJwtToken(loginDto.getEmail()));
-                return "redirect:/dashboard";
-            }
-            case HttpStatus.UNAUTHORIZED -> {
-                model.addAttribute("error", "Invalid email or password");
-                return "redirect:/login";
-            }
-            default -> {
-                model.addAttribute("loginDto", new UserLoginDto());
-                return "login";
-            }
+    public String login(@ModelAttribute("user") UserLoginDto loginDto, Model model, HttpSession httpSession) {
+        ResponseEntity<String> response = userService.login(loginDto);
+        if(response.getStatusCode().is2xxSuccessful()) {
+            httpSession.setAttribute("jwt",response.getBody());
+            return "redirect:/dashboard";
         }
+        model.addAttribute("loginDto", new UserLoginDto());
+        return "users/login";
     }
 
     //Display success get
     @GetMapping("/dashboard")
+    @PreAuthorize("isAuthenticated()")
     public String dashboard(Model model, HttpSession session) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
-            return "redirect:/login";
-        }
-        return "dashboard";
+        return "users/dashboard";
+    }
+
     }
 
     @GetMapping("/logout")
     public String logout(HttpServletResponse httpServletResponse, HttpSession httpSession) {
         httpSession.invalidate();
-        return "login";
+        return "users/login";
     }
 
     //**************Auxiliary Functions**************
@@ -113,18 +110,20 @@ public class UserController {
         return new ResponseEntity<>("Post only", HttpStatus.METHOD_NOT_ALLOWED);
     }
 
-    @PostMapping("/pi-register")
-    public ResponseEntity<String> register(UserRegistrationDto registerDto){
-        return userService.register(registerDto);
-    }
-
     @GetMapping("/pi-login")
     public ResponseEntity<String> login() {
         return new ResponseEntity<>("Post only", HttpStatus.METHOD_NOT_ALLOWED);
     }
 
+    @PostMapping("/pi-register")
+    public ResponseEntity<String> register(UserRegistrationDto registerDto){
+        return userService.register(registerDto);
+    }
+
     @PostMapping("/pi-login")
-    public ResponseEntity<String> register(UserLoginDto loginDto){
-        return userService.login(loginDto);
+    public ResponseEntity<Map<String,String>> register(UserLoginDto loginDto){
+        ResponseEntity<String> response = userService.login(loginDto);
+        assert response.getBody() != null;
+        return new ResponseEntity<>(Map.of("token",response.getBody()), response.getStatusCode());
     }
 }
