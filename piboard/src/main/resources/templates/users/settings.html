@@ -1,0 +1,25 @@
+<!--Settings-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Settings</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}"/>
+</head>
+<body>
+<!--Top-->
+<header>
+    <h1>(&pi;) pi_board</h1>
+</header>
+<h2>Welcome, <span th:text="${#authentication.name}"></span>! </h2>
+<p>In Progress, this page should allow for users to change their passwords and personal details</p>
+<!--Change Email-->
+<a th:href="@{/logout}">
+    <button type="button">Logout</button>
+</a>
+<!--Change Password-->
+<a th:href="@{/templates/issues}">
+    <button type="button">My Issues</button>
+</a>
+</body>
+</html>

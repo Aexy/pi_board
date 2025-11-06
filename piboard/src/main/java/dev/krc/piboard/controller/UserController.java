@@ -93,6 +93,10 @@ public class UserController {
         return "users/dashboard";
     }
 
+    @GetMapping("/settings")
+    @PreAuthorize("isAuthenticated()")
+    public String settings(Model model, HttpSession session) {
+        return "users/settings";
     }
 
     @GetMapping("/logout")

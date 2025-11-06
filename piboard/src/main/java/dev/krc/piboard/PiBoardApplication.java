@@ -5,6 +5,7 @@
 
 package dev.krc.piboard;
 
+import dev.krc.piboard.service.IssueService;
 import dev.krc.piboard.service.UserService;
 import org.springframework.ai.support.ToolCallbacks;
 import org.springframework.ai.tool.ToolCallback;
@@ -13,6 +14,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.util.List;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 @SpringBootApplication
 public class PiBoardApplication {
@@ -22,7 +26,10 @@ public class PiBoardApplication {
 	}
 
     @Bean
-    public List<ToolCallback> tools(UserService userService) {
-        return List.of(ToolCallbacks.from(userService));
+    public List<ToolCallback> tools(UserService userService , IssueService issueService) {
+        return Stream.of(
+                        ToolCallbacks.from(userService),
+                        ToolCallbacks.from(issueService)
+                ).flatMap(Stream::of).collect(toList());
     }
 }

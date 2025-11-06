@@ -1,0 +1,48 @@
+.container{
+    margin: 50px auto;
+    width: 300px;
+    padding: 15px;
+    background-color: #1e3a5f;
+    box-sizing: border-box;
+    border-radius: 10px;
+    text-align: center;
+}
+
+input[type=email], input[type=password]{
+    width: 100%;
+    padding: 15px;
+    display: inline-block;
+    background: #f1f1f1;
+}
+
+input[type=email]:focus, input[type=password]:focus{
+    background-color: #dddddd;
+    outline: none;
+}
+
+p{
+    color: whitesmoke;
+    justify-content: center;
+}
+
+h2{
+    color: whitesmoke;
+    justify-content: center;
+}
+
+label{
+    display: block;
+    color: whitesmoke;
+    text-align: left;
+}
+.submitbutton{
+    background-color: #395c89;
+    color: whitesmoke;
+    padding: 16px 20px;
+    margin: 8px 0;
+    border: none;
+    width: 100%;
+    font-size: medium;
+    cursor: pointer;
+}
+

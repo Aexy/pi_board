@@ -1,13 +1,11 @@
 package dev.krc.piboard.dto;
 
 import dev.krc.piboard.model.IssueState;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
+@Data
 @Getter
 @Setter
 @AllArgsConstructor

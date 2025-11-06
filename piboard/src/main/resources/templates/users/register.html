@@ -5,31 +5,38 @@
     <meta charset="UTF-8">
     <title>Register</title>
     <link rel="stylesheet" th:href="@{/css/home.css}"/>
+    <link rel="stylesheet" th:href="@{/css/register.css}"/>
 </head>
 <body>
     <!--Top-->
     <header>
         <h1>(&pi;) pi_board</h1>
     </header>
+    <div class="container">
+        <h2>Register</h2>
+        <form th:action="@{/register}" th:object="${registerDto}" method="post">
+            <!--email-->
+            <label>Email: </label>
+            <input type="email" th:field="*{email}" placeholder="Email" required/>
+            <div th:if="${#fields.hasErrors('email')}">
+                <p th:errors="*{email}"></p>
+            </div>
+            <!--password-->
+            <label>Password: </label>
+            <input type="password" th:field="*{password}" placeholder="Password" required/>
+            <div th:if="${#fields.hasErrors('password')}">
+                <p th:errors="*{password}"></p>
+            </div>
+            <!--password confirmation-->
+            <label>Password Confirmation: </label>
+            <input type="password" th:field="*{confirmPassword}" placeholder="Confirm Password" required/>
+            <div th:if="${#fields.hasErrors('confirmPassword')}">
+                <p th:errors="*{confirmPassword}"></p>
+            </div>
 
-<form th:action="@{/register}" th:object="${registerDto}" method="post">
-    <!--email-->
-    <input type="email" th:field="*{email}" placeholder="Email" required/>
-    <div th:if="${#fields.hasErrors('email')}">
-        <p th:errors="*{email}"></p>
+            <button type="submit" class="submitbutton">Register</button>
+            <p> Already have an account ? <a th:href="@{/login}">Login</a></p>
+        </form>
     </div>
-    <!--password-->
-    <input type="password" th:field="*{password}" placeholder="Password" required/>
-    <div th:if="${#fields.hasErrors('password')}">
-        <p th:errors="*{password}"></p>
-    </div>
-    <!--password confirmation-->
-    <input type="password" th:field="*{confirmPassword}" placeholder="Confirm Password" required/>
-    <div th:if="${#fields.hasErrors('confirmPassword')}">
-        <p th:errors="*{confirmPassword}"></p>
-    </div>
-
-    <button type="submit">Register</button>
-</form>
 </body>
 </html>

@@ -1,32 +1,38 @@
 <!--Login Page-->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Login</title>
   <link rel="stylesheet" th:href="@{/css/home.css}"/>
+    <link rel = "stylesheet" th:href="@{/css/login.css}"/>
 </head>
 <body>
     <!--Top-->
     <header>
         <h1>(&pi;) pi_board</h1>
     </header>
-
-    <form th:action="@{/login}" th:object="${loginDto}" method="post">
-        <!--email-->
-        <input type="email" th:field="*{email}" placeholder="Email" required/>
-        <div th:if="${#fields.hasErrors('email')}">
-            <p th:errors="*{email}"></p>
-        </div>
-        <!--password-->
-        <input type="password" th:field="*{password}" placeholder="Password" required/>
-        <div th:if="${#fields.hasErrors('password')}">
-            <p th:errors="*{password}"></p>
-        </div>
-        <!--errors-->
-        <p th:if="${error}" th:text="${error}"></p>
-        <button type="submit">Log in</button>
-    </form>
+    <div class="container">
+        <h2>Login</h2>
+        <p>Login to start using (&pi;)_board</p>
+        <form th:action="@{/login}" th:object="${loginDto}" method="post">
+            <!--email-->
+            <label>Email: </label>
+            <input type="email" th:field="*{email}" placeholder="Email" required/>
+            <div th:if="${#fields.hasErrors('email')}">
+                <p th:errors="*{email}"></p>
+            </div>
+            <!--password-->
+            <label>Password: </label>
+            <input type="password" th:field="*{password}" placeholder="Password" required/>
+            <div th:if="${#fields.hasErrors('password')}">
+                <p th:errors="*{password}"></p>
+            </div>
+            <!--errors-->
+            <p class="highlighted" th:if="${error}" th:text="${error}"></p>
+            <button type="submit" class="submitbutton">Login</button>
+        </form>
+    </div>
 </body>
 </html>
 
