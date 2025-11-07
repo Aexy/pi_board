@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "pi-board-mcp": {
+      "command": "JAVA_HOME/bin/java",
+      "args": [
+        "-jar",
+        "PI_LOCATION/piboard-0.0.1-SNAPSHOT.jar"
+      ],
+      "env":{
+        "DB_USER":"yourUser",
+        "DB_PASS":"yourPass",
+        "DB_CONNECTION":"yourUrl",
+        "USER_NAME":"nameforspringdefault (not necessarily used)",
+        "USER_PASS":"passforspringdefault (not necessarily used)",
+        "JWT_KEY":"yourHS512JWTkey"
+      }
+    }
+  }
+}
