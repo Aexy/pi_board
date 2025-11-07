@@ -43,12 +43,15 @@ It provides a clean interface to show the progress of issues through states, lis
    ```dotenv
    DB_USER=yourPostgresUser
    DB_PASS=yourPostgresPass
-   DB_CONNECTION=yourDatabaseUrl
+   DB_CONNECTION=yourDatabaseUrl*
+   PORT=8080*
+   JWT_KEY=yourHS512JWTkey
    ```
 
-   - `DB_CONNECTION` should be in the format your PostgreSQL expects (host, port, etc.).  
+   - `DB_CONNECTION` should be in the format your PostgreSQL expects (host, port, etc.).
+   - `PORT` should be the port that will be used to access the board using `https://localhost:PORT`  
    - If using Supabase, check out the [tutorial](https://medium.com/@khan.abdulwasey99/step-by-step-process-on-how-to-connect-a-spring-boot-application-to-supabase-f1791e1d2402) to find your databse url 
-   - Make sure your DB user has privileges to create/read/write tables, etc.
+   - Make sure your DB user has privileges to create/read/write tables.
 
 3. **Install dependencies & build**
 
@@ -75,3 +78,39 @@ It provides a clean interface to show the progress of issues through states, lis
    ```bash
    http://localhost:8080
    ```
+   
+---
+
+
+### Setup & Run as MCP Server (example uses Claude Desktop on Windows) + Web Interface: 
+
+1. **Follow the steps above until step 3**
+
+2. **Package the Application**
+
+   ```bash
+   mvn clean package -DskipTests
+   ```
+   
+3. **Move the `.jar` file**
+
+   - Maven will create a folder called target, which has the `piboard-...SNAPSHOT.jar` file.
+   - Create a new folder under `..\Users\youruser` and name it `piboard`.
+   - Copy or move the file to `\Users\youruser\piboard`.
+
+   
+4. **Run (`Win+R`) %appdata%**
+   
+   - Locate the Claude folder under `AppData/Roaming` and open the `claude_desktop_config.json` file.
+   
+5. **Configure the `claude_desktop_config.json` file**
+   
+   - Example snippet can be found in the repository as `claude_example.json`.
+   - **Important**: Make sure to use forward slash in the `config.json` file for the next steps.
+   - Change the JAVA_HOME to point to `.../bin/java` in your device.
+   - Change the PI_LOCATION to point to the location of your `.jar` file.
+   - `USER_NAME` and `USER_PASS` will only be used for debugging, can be set to anything without spaces.
+   - Fields in the `.env` section should match the `.env` file created in step 2.
+   
+6. **Start or Restart Claude Desktop by quitting first (from the taskbar)**
+
