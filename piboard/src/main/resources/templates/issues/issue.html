@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Issues</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}"/>
+</head>
+<body>
+<!--Top-->
+<header>
+    <h1>(&pi;) pi_board</h1>
+</header>
+
+    <div class="picontainer">
+        <h2 class="white" th:text="${issue.getTitle()}"></h2>
+        <p class="white"><strong>Description: </strong></p>
+        <p class="white" th:text="${issue.getDescription()}"></p>
+
+<!--        <p class="white"><strong>Status: </strong> <span th:text="${issue.getState()}"></span></p>-->
+        <form th:action="@{'/issues/' + ${issue.getId()}}"  method="post">
+            <label class="white"><strong>State: </strong>
+                <select name="state">
+                    <option
+                        th:each="state : ${states}"
+                        th:value="${state}"
+                        th:text="${state.getLabel()}"
+                        th:selected="${state == issue.getState()}">
+                    </option>
+                </select>
+            </label>
+            <button type="submit" class="pibutton">Submit</button>
+        </form>
+
+
+        <p class="white"><strong>Created: </strong> <span th:text="${issue.getDueDate()}"></span></p>
+        <a th:href="@{/all-issues}">
+            <button type="submit" class="pibutton">My Issues</button>
+        </a>
+    </div>
+
+<!--This will show one issue, given dto: isRespDtO-->
+</body>
+</html>

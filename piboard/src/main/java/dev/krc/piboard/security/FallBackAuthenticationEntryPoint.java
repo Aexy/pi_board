@@ -15,7 +15,7 @@ public class FallBackAuthenticationEntryPoint implements AuthenticationEntryPoin
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         String accept = request.getHeader("Accept");
         if(accept != null && accept.contains("text/html")) { //Web
-            response.sendRedirect("/login");
+            response.sendRedirect("/register");
         }else { //Direct Endpoint
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

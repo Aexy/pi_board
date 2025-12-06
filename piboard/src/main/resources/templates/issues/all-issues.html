@@ -3,30 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <title>All Issues</title>
-    <link rel="stylesheet" th:href="@{/css/home.css}"/>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/kanban-style.css}"/>
 </head>
 <body>
-    <!--Top-->
     <header>
         <h1>(&pi;) pi_board</h1>
     </header>
-    <h2>All Issues</h2>
-    <table>
-        <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Due</th>
-            <th>Status</th>
-            <th>Assignee</th>
-        </tr>
-        <tr th:each="issue : ${issues}">
-            <td th:text="${issue.title}"></td>
-            <td th:text="${issue.description}"></td>
-            <td th:text="${issue.dueDate}"></td>
-            <td th:text="${issue.state}"></td>
-            <td th:text="${issue.assignee}"></td>
-        </tr>
 
-    </table>
+    <div class="horizontal-button">
+        <a th:href="@{/issues}">
+            <button type="submit" class="pibutton">My Issues</button>
+        </a>
+        <a th:href="@{/new-issue}">
+            <button type="button" class="pibutton">New Issue</button>
+        </a>
+    </div>
+    <h2>Issue Board</h2>
+    <div class="board">
+    <!--IssueState-->
+        <div class="column" th:each="state : ${states}">
+            <h3 th:text="${state.getLabel()}"></h3>
+    <!--issues -->
+            <div class="issue-card"
+                 th:each="issue : ${issues}" th:if="${issue.state == state}">
+                <h4 th:text="${issue.title}"></h4>
+                <p th:text="${issue.description}"></p>
+                <div class="details">
+                    <span>Due: <span th:text="${issue.dueDate}"></span></span><br>
+                    <span>Assignee: <span th:text="${issue.assignee}"></span></span>
+                </div>
+                <a th:href="@{'/issues/' + ${issue.getId()}}" class="view-link">View</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

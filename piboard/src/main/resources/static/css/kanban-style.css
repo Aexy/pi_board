@@ -1,0 +1,37 @@
+.board {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+}
+
+.column {
+    background: #c0e0ff;
+    padding: 15px;
+    align-items: center;
+    border-radius: 8px;
+    width: 260px;
+    min-width: 260px;
+    border: 1px solid #dddddd;
+}
+
+.column h3 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.issue-card {
+    background: white;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.issue-card h4 {
+    margin: 0 0 5px;
+}
+
+.details {
+    font-size: 0.8em;
+    color: #555;
+}

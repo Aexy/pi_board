@@ -11,14 +11,13 @@
         <h1>(&pi;) pi_board</h1>
     </header>
 
-    <!--Send get request to all issues-->
-    <a th:href="@{/all-issues}">
-        <button type="button">List all issues</button>
-    </a>
-
-    <!--Send get request to add issue-->
-    <a th:href="@{/new-issue}">
-        <button type="button">Add an issue</button>
-    </a>
+    <div class="vertical-button">
+        <a th:href="@{/all-issues}">
+            <button type="button" class="pibutton">Issue Board</button>
+        </a>
+        <a th:href="@{/new-issue}">
+            <button type="button" class="pibutton">New Issue</button>
+        </a>
+    </div>
 </body>
 </html>

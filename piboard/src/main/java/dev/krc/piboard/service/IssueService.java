@@ -33,9 +33,18 @@ public class IssueService {
 
     public ResponseEntity<List<IssueResponseDto>> getIssues(String jwt) {
         if(usersRepository.findByEmail(jwtutil.extractEmailFromToken(jwt)).orElse(null) instanceof Users user) {
-            return new ResponseEntity<>(repository.findAllByUserId(user.getId()).stream().map(this::mapToIssueDto).toList(), HttpStatus.OK);
+            return new ResponseEntity<>(repository.findAllByUserId(user.getId()).stream().map(IssueResponseDto::fromIssues).toList(), HttpStatus.OK);
         }
         return new ResponseEntity<>(new ArrayList<>(),HttpStatus.UNAUTHORIZED);
+    }
+
+    public ResponseEntity<IssueResponseDto> getIssueById(int id) {
+        Issues found = repository.findById(id).orElse(null);
+        if(found == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        IssueResponseDto issueResponseDto = IssueResponseDto.fromIssues(found);
+        return new ResponseEntity<>(issueResponseDto, HttpStatus.OK);
     }
 
     public ResponseEntity<String> addIssue(IssueRequestDto issueDto, String jwt) {
@@ -58,10 +67,16 @@ public class IssueService {
         return new ResponseEntity<>("Issue has been added", HttpStatus.CREATED);
     }
 
-    //**************Auxiliary Functions**************
-    private IssueResponseDto mapToIssueDto(Issues is) {
-        return new IssueResponseDto(is.getTitle(),is.getDescription(),is.getDueDate(),is.getState(),is.getUser().getEmail());
+    public void updateIssue(int id, IssueState newState) {
+        Issues found = repository.findById(id).orElse(null);
+        if(found == null) {
+            return;
+        }
+        found.setState(newState);
+        repository.save(found);
     }
+
+    //**************Auxiliary Functions**************
 
     //**************MCP Related Functions**************
     @Tool(name = "all-issues", description = "Returns all issues and their details")
@@ -79,7 +94,7 @@ public class IssueService {
         if(issues.isEmpty()){
             return "No issues found, to add an issue use add issue and specify (Title, Description, Status and User)";
         }
-        List<IssueResponseDto> issueDtoList = issues.stream().map(this::mapToIssueDto).toList();
+        List<IssueResponseDto> issueDtoList = issues.stream().map(IssueResponseDto::fromIssues).toList();
         return  "All the issues found for the user are: " + issueDtoList;
     }
 

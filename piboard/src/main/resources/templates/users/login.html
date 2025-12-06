@@ -5,16 +5,15 @@
   <meta charset="UTF-8">
   <title>Login</title>
   <link rel="stylesheet" th:href="@{/css/home.css}"/>
-    <link rel = "stylesheet" th:href="@{/css/login.css}"/>
 </head>
 <body>
     <!--Top-->
     <header>
         <h1>(&pi;) pi_board</h1>
     </header>
-    <div class="container">
-        <h2>Login</h2>
-        <p>Login to start using (&pi;)_board</p>
+    <div class="picontainer">
+        <h2 class="white">Login</h2>
+        <p class="white">Login to start using (&pi;)_board</p>
         <form th:action="@{/login}" th:object="${loginDto}" method="post">
             <!--email-->
             <label>Email: </label>
@@ -30,7 +29,7 @@
             </div>
             <!--errors-->
             <p class="highlighted" th:if="${error}" th:text="${error}"></p>
-            <button type="submit" class="submitbutton">Login</button>
+            <button type="submit" class="pibutton">Login</button>
         </form>
     </div>
 </body>

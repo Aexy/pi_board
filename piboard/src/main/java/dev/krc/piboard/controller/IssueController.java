@@ -2,6 +2,7 @@ package dev.krc.piboard.controller;
 
 import dev.krc.piboard.dto.IssueRequestDto;
 import dev.krc.piboard.dto.IssueResponseDto;
+import dev.krc.piboard.model.IssueState;
 import dev.krc.piboard.service.IssueService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
@@ -10,10 +11,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -32,11 +32,32 @@ public class IssueController {
         return "issues/issues";
     }
 
-    //Displays the page with all the issues
+    @GetMapping("/issues/{id}")
     @PreAuthorize("isAuthenticated()")
+    public String issue(Model model, @PathVariable int id) {
+        ResponseEntity<IssueResponseDto> issueRes =  issueService.getIssueById(id);
+        model.addAttribute("states",IssueState.values());
+        if(issueRes.getStatusCode().is2xxSuccessful()) {
+            model.addAttribute("issue", issueRes.getBody());
+            return "issues/issue";
+        }
+        model.addAttribute("issue", new IssueResponseDto(0,"No Such Issue","No Such Description", LocalDate.now(), IssueState.Closed,"No One"));
+        return "issues/issue";
+    }
+
+    @PostMapping("/issues/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String updateIssue(Model model, @RequestParam("state") IssueState newState, @PathVariable int id) {
+        issueService.updateIssue(id,newState);
+        return "redirect:/all-issues";
+    }
+
+    //Displays the page with all the issues
     @GetMapping("/all-issues")
+    @PreAuthorize("isAuthenticated()")
     public String allIssues(Model model, HttpSession session) {
         model.addAttribute("issues", issueService.getIssues(session.getAttribute("jwt").toString()).getBody());
+        model.addAttribute("states",IssueState.values());
         return "issues/all-issues";
     }
 
@@ -48,6 +69,7 @@ public class IssueController {
     }
 
     @PostMapping("/anew-issue")
+    @PreAuthorize("isAuthenticated()")
     public String addNewIssue(@ModelAttribute("issueDto") IssueRequestDto issueDto, Model model, HttpSession session) {
         ResponseEntity<String> response = issueService.addIssue(issueDto, session.getAttribute("jwt").toString());
         if(!response.getStatusCode().is2xxSuccessful()){
